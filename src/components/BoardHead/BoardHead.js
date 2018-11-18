@@ -7,7 +7,9 @@ const BoardHead = props => {
   let time = `${minutes}:${formattedSeconds}`;
   return (
     <div>
-      <div className="board-time">
+      <div className="board-head">
+        <div className="flag-count">{props.flagCount}</div>
+        <button className="reset">Reset</button>
         <div className="timer">{time}</div>
       </div>
     </div>

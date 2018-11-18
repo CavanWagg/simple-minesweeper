@@ -17,8 +17,8 @@ class Board extends Component {
 
       for (let j = 0; j < props.columns; j++) {
         board[i].push({
-          x: i,
-          y: j,
+          x: j,
+          y: i,
           // nearby mines
           count: 0,
           // cell clicked/unclicked
@@ -44,9 +44,63 @@ class Board extends Component {
     }
     return board;
   };
+  // open cell
+  open = cell => {
+    let rows = this.state.rows;
+
+    let current = rows[cell.y][cell.x];
+
+    if (current.hasMine && this.props.openCells === 0) {
+      console.log("cell has mine, restart!!!");
+      let newRows = this.createBoard(this.props);
+      this.setState(
+        {
+          rows: newRows
+        },
+        () => {
+          this.open(cell);
+        }
+      );
+    } else {
+      if (!cell.hasFlag && !current.isOpen) {
+        this.props.openCellClick();
+        current.isOpen = true;
+
+        this.setState({ rows });
+
+        console.log(this.state.rows);
+      }
+    }
+  };
+
+  findMines = cell => {
+    let minesInProximity = 0;
+    for (let row = -1; row <= 1; row++) {
+      for (let col = -1; col <= 1; col++) {
+        // position must be positive x and y value
+        if (cell.y + row >= 0 && cell.x + col >= 0) {
+          // check if cell is valid to our board
+          if (
+            cell.y + row < this.state.rows.length &&
+            cell.x + col < this.state.rows[0].length
+          ) {
+            // check if cell has a mine or not
+            if (
+              this.state.rows[cell.y + row][cell.x + col].hasMine &&
+              !(row === 0 && col === 0)
+            ) {
+              minesInProximity++;
+            }
+          }
+        }
+      }
+    }
+    return minesInProximity;
+  };
+
   render() {
     let rows = this.state.rows.map((row, index) => {
-      return <Row cells={row} key={index} />;
+      return <Row cells={row} key={index} open={this.open} />;
     });
     return <div className="board"> {rows}</div>;
   }
