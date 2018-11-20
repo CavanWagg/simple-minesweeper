@@ -75,6 +75,10 @@ class Board extends Component {
 
           this.setState({ rows });
 
+          if (!current.hasMine && numberOfMines === 0) {
+            this.findAroundCell(cell);
+          }
+
           console.log(this.state.rows);
         }
       }
@@ -104,6 +108,28 @@ class Board extends Component {
       }
     }
     return minesInProximity;
+  };
+
+  findAroundCell = cell => {
+    let rows = this.state.rows;
+
+    // go through each cell and open cells one by one until we find one with a mine.
+    for (let row = -1; row <= 1; row++) {
+      for (let col = -1; col <= 1; col++) {
+        // position must be positive x and y value
+        if (cell.y + row >= 0 && cell.x + col >= 0) {
+          // check if cell is valid to our board
+          if (cell.y + row < rows.length && cell.x + col < rows[0].length) {
+            if (
+              !rows[cell.y + row][cell.x + col].hasMine &&
+              !rows[cell.y + row][cell.x + col].isOpen
+            ) {
+              this.open(rows[cell.y + row][cell.x + col]);
+            }
+          }
+        }
+      }
+    }
   };
 
   render() {

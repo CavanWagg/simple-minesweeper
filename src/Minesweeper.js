@@ -38,6 +38,8 @@ class Minesweeper extends Component {
         }
       );
     }
+
+    this.setState();
   };
 
   render() {
