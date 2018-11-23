@@ -2,10 +2,6 @@ import React, { Component } from "react";
 import Board from "./components/Board/Board.js";
 import BoardHead from "./components/BoardHead/BoardHead";
 class Minesweeper extends Component {
-  constructor() {
-    super();
-    this.intervals = [];
-  }
   state = {
     status: "waiting", // waiting, running, end
     openCells: 0,
@@ -15,6 +11,9 @@ class Minesweeper extends Component {
     mines: 10,
     time: 0
   };
+  componentWillMount() {
+    this.intervals = [];
+  }
 
   tick = () => {
     if (this.state.openCells > 0 && this.state.status === "running") {
@@ -39,7 +38,9 @@ class Minesweeper extends Component {
       );
     }
 
-    this.setState();
+    this.setState(prevState => {
+      return { openCells: prevState.openCells + 1 };
+    });
   };
 
   render() {

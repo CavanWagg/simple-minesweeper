@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Row from "../Row/Row.js";
 
 class Board extends Component {
+  // constructor is used because we are initializing state
   constructor(props) {
     super(props);
 
@@ -9,8 +10,20 @@ class Board extends Component {
       rows: this.createBoard(props)
     };
   }
+  // convert to memoization helper or some state
+  componentWillReceiveProps(nextProps) {
+    if (
+      this.props.openCells > nextProps.openCells ||
+      this.props.columns !== nextProps.columns
+    ) {
+      this.setState({
+        rows: this.createBoard(nextProps)
+      });
+    }
+  }
 
   createBoard = props => {
+    // create 2D grid based off # of columns and rows passed in from props
     let board = [];
     for (let i = 0; i < props.rows; i++) {
       board.push([]);
@@ -36,6 +49,7 @@ class Board extends Component {
       let cell = board[randomRow][randomColumn];
 
       if (cell.hasMine) {
+        // if cell already has mine, loop back and select another random cell
         i--;
       } else {
         cell.hasMine = true;
@@ -44,6 +58,17 @@ class Board extends Component {
     }
     return board;
   };
+
+  flag = cell => {
+    if (this.props.status === "ended") {
+      return;
+    }
+    let rows = this.state.rows;
+    cell.hasFlag = !cell.hasFlag;
+    this.setState({ rows });
+    this.props.changeFlagAmount(cell.hasFlag ? -1 : 1);
+  };
+
   // open cell
   open = cell => {
     let asyncCountMines = new Promise(resolve => {
@@ -79,7 +104,7 @@ class Board extends Component {
             this.findAroundCell(cell);
           }
 
-          console.log(this.state.rows);
+          // console.log(this.state.rows);
         }
       }
     });
