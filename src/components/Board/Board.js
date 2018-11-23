@@ -71,6 +71,10 @@ class Board extends Component {
 
   // open cell
   open = cell => {
+    if (this.props.status === "ended") {
+      return;
+    }
+    // find mines around cell asynchronously, we must calculate mines before running anything else
     let asyncCountMines = new Promise(resolve => {
       let mines = this.findMines(cell);
       resolve(mines);
@@ -82,7 +86,7 @@ class Board extends Component {
       let current = rows[cell.y][cell.x];
 
       if (current.hasMine && this.props.openCells === 0) {
-        console.log("cell has mine, restart!!!");
+        console.log("cell has mine, restart!!!"); // This prevents a user from losing from first try
         let newRows = this.createBoard(this.props);
         this.setState(
           {
@@ -99,9 +103,12 @@ class Board extends Component {
           current.count = numberOfMines;
 
           this.setState({ rows });
-
+          // since we know its not a flag and it's not a bomb we should attempt to open the surrounding cells
           if (!current.hasMine && numberOfMines === 0) {
             this.findAroundCell(cell);
+          }
+          if (current.hasMine && this.props.openCells !== 0) {
+            this.props.endGame();
           }
 
           // console.log(this.state.rows);
@@ -138,7 +145,7 @@ class Board extends Component {
   findAroundCell = cell => {
     let rows = this.state.rows;
 
-    // go through each cell and open cells one by one until we find one with a mine.
+    // loop through each cell and open cells one by one until we find one with a mine.
     for (let row = -1; row <= 1; row++) {
       for (let col = -1; col <= 1; col++) {
         // position must be positive x and y value
@@ -146,7 +153,7 @@ class Board extends Component {
           // check if cell is valid to our board
           if (cell.y + row < rows.length && cell.x + col < rows[0].length) {
             if (
-              !rows[cell.y + row][cell.x + col].hasMine &&
+              !this.state.rows[cell.y + row][cell.x + col].hasMine &&
               !rows[cell.y + row][cell.x + col].isOpen
             ) {
               this.open(rows[cell.y + row][cell.x + col]);
@@ -158,9 +165,9 @@ class Board extends Component {
   };
 
   render() {
-    let rows = this.state.rows.map((row, index) => {
-      return <Row cells={row} key={index} open={this.open} />;
-    });
+    let rows = this.state.rows.map((cells, index) => (
+      <Row cells={cells} key={index} open={this.open} flag={this.flag} />
+    ));
     return <div className="board"> {rows}</div>;
   }
 }
