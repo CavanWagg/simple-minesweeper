@@ -7,7 +7,7 @@ const BoardHead = props => {
   let formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
   let time = `${minutes}:${formattedSeconds}`;
 
-  // add status/smiley face???
+  // add gameStatus/smiley face???
 
   return (
     <div>

@@ -1,6 +1,10 @@
 @import 'components/BoardHead/base';
 @import 'components/Board/base';
-
+$red: #f72215;
+$green: #a0c409;
+$blue: #1cb0d4;
+$yellow: #ffd439;
+$orange: #faa405;
 * {
   margin: 0;
   padding: 0;
@@ -11,6 +15,7 @@ body {
   height: 100%;
   #root {
     height: 100%;
+    background: $green;
     display: flex;
     justify-content: center;
     align-items: center;

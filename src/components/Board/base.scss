@@ -1,5 +1,12 @@
+$red: #f72215;
+$green: #a0c409;
+$blue: #1cb0d4;
+$yellow: #ffd439;
+$orange: #faa405;
+
 .board {
   width: 499px;
+  background: $yellow;
   height: 499px;
   border: 1px solid #444;
   border-bottom: none;

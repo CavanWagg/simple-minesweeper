@@ -60,7 +60,7 @@ class Board extends Component {
   };
 
   flag = cell => {
-    if (this.props.status === "ended") {
+    if (this.props.gameStatus === "ended") {
       return;
     }
     let rows = this.state.rows;
@@ -71,7 +71,7 @@ class Board extends Component {
 
   // open cell
   open = cell => {
-    if (this.props.status === "ended") {
+    if (this.props.gameStatus === "ended") {
       return;
     }
     // find mines around cell asynchronously, we must calculate mines before running anything else
@@ -98,7 +98,7 @@ class Board extends Component {
         );
       } else {
         if (!cell.hasFlag && !current.isOpen) {
-          this.props.openCellClick();
+          this.props.handleCellClick();
           current.isOpen = true;
           current.count = numberOfMines;
 
@@ -107,7 +107,9 @@ class Board extends Component {
           if (!current.hasMine && numberOfMines === 0) {
             this.findAroundCell(cell);
           }
+
           if (current.hasMine && this.props.openCells !== 0) {
+            console.log("shucks");
             this.props.endGame();
           }
 
@@ -166,7 +168,7 @@ class Board extends Component {
 
   render() {
     let rows = this.state.rows.map((cells, index) => (
-      <Row cells={cells} key={index} open={this.open} flag={this.flag} />
+      <Row cells={cells} open={this.open} flag={this.flag} key={index} />
     ));
     return <div className="board"> {rows}</div>;
   }

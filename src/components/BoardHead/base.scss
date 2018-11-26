@@ -1,3 +1,9 @@
+$red: #f72215;
+$green: #a0c409;
+$blue: #1cb0d4;
+$yellow: #ffd439;
+$orange: #faa405;
+
 .board-head {
   display: flex;
   flex-direction: row;
@@ -6,6 +12,7 @@
   align-items: center;
   border-left: 1px solid #444;
   border-right: 1px solid #444;
+  background: $orange;
   .reset,
   .flag-count,
   .timer {
@@ -17,5 +24,8 @@
   }
   .reset {
     font-size: 25px;
+    padding-left: 50px;
+    padding-right: 50px;
+    background: $blue;
   }
 }

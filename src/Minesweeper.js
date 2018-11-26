@@ -6,11 +6,11 @@ class Minesweeper extends Component {
     super();
 
     this.state = {
-      status: "waiting", // waiting, running, end
+      gameStatus: "waiting", // waiting, running, end
       openCells: 0,
       rows: 10,
       columns: 10,
-      flags: 10,
+      flagCount: 10,
       mines: 10,
       time: 0
     };
@@ -26,13 +26,13 @@ class Minesweeper extends Component {
   checkForWinner = () => {
     if (
       this.state.mines + this.state.openCells >=
-      this.state.rows * this.state.coumns
+      this.state.rows * this.state.columns
     ) {
       this.setState(
         {
           gameStatus: "winner"
         },
-        alert("you won!")
+        alert(`Congratulations! you win! Time: ${this.state.time} seconds`)
       );
     }
   };
@@ -40,14 +40,9 @@ class Minesweeper extends Component {
   componentWillMount() {
     this.intervals = [];
   }
-
-  tick = () => {
-    if (this.state.openCells > 0 && this.state.status === "running") {
-      let time = this.state.time + 1;
-      this.setState({ time });
-    }
+  setInterval = (fn, t) => {
+    this.intervals.push(setInterval(fn, t));
   };
-
   reset = () => {
     this.intervals.map(clearInterval);
     this.setState(Object.assign({}, this.baseState), () => {
@@ -55,12 +50,28 @@ class Minesweeper extends Component {
     });
   };
 
-  setInterval = (fn, t) => {
-    this.intervals.push(setInterval(fn, t));
+  tick = () => {
+    if (this.state.openCells > 0 && this.state.gameStatus === "running") {
+      let time = this.state.time + 1;
+      this.setState({ time });
+    }
+  };
+
+  endGame = () => {
+    this.setState(
+      {
+        gameStatus: "ended"
+      },
+      alert(`Game Over, click the Reset button to start a new game`)
+    );
+  };
+
+  changeFlagAmount = amount => {
+    this.setState({ flagCount: this.state.flagCount + amount });
   };
 
   handleCellClick = () => {
-    if (this.state.openCells === 0 && this.state.status !== "running") {
+    if (this.state.openCells === 0 && this.state.gameStatus !== "running") {
       this.setState(
         {
           gameStatus: "running"
@@ -73,25 +84,15 @@ class Minesweeper extends Component {
     });
   };
 
-  changeFlagAmount = amount => {
-    this.setState({ flagCount: this.state.flagCount + amount });
-  };
-
-  endGame = () => {
-    this.setState({
-      gameStatus: "ended"
-    });
-  };
-
   render() {
     return (
       <div className="minesweeper">
-        <h1>Minesweeper</h1>
+        <h1 style={{ background: "#faa405" }}>Minesweeper </h1>
         <BoardHead
           time={this.state.time}
           reset={this.reset}
-          status={this.state.gameStatus}
-          flagsUsed={this.state.flags}
+          gameStatus={this.state.gameStatus}
+          flagsUsed={this.state.flagCount}
         />
         <Board
           rows={this.state.rows}
@@ -99,8 +100,8 @@ class Minesweeper extends Component {
           mines={this.state.mines}
           openCells={this.state.openCells}
           endGame={this.endGame}
-          status={this.state.gameStatus}
-          openCellClick={this.handleCellClick}
+          gameStatus={this.state.gameStatus}
+          handleCellClick={this.handleCellClick}
           changeFlagAmount={this.changeFlagAmount}
         />
       </div>
